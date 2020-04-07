@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const fetch = require('isomorphic-fetch');
 
 const app = new express();
 const port = 5678;
@@ -8,7 +9,7 @@ const port = 5678;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get('/spotify_access_token', (req, res, next) => {
+app.get('/spotify_access_token', async (req, res, next) => {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_SECRET;
 
@@ -18,11 +19,12 @@ app.get('/spotify_access_token', (req, res, next) => {
     'base64'
   );
 
+
   // TODO: use authString in a request to Spotify!
   res.send({ todo: true });
 });
 
-app.listen(port, function(error) {
+app.listen(port, function(error) { 
   if (error) {
     console.error(error);
   } else {
