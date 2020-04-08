@@ -15,6 +15,7 @@ import {
 } from '../../actions';
 
 import {slimNumber} from '../utilities';
+import FullScreenSpinner from '../FullScreenSpinner';
 
 const ArtistRoute = () => {
   const { artistId } = useParams();
@@ -22,6 +23,7 @@ const ArtistRoute = () => {
   // console.log('param ', artistId, 'tokenn ', accessToken);
   const artist = useSelector((state) => state.artists.currentArtist);
   const status = useSelector((state) => state.artists.status);
+
   const dispatch = useDispatch();
 
   const [playing, setPlaying] = React.useState(null);
@@ -54,8 +56,7 @@ const ArtistRoute = () => {
     setPlaying(input);
   };
 
-// 'https://p.scdn.co/mp3-preview/48e52b22229808784102425b7735be8458d687dc'
-console.log(status, artist);
+// console.log(status, artist);
 
   return (artist && (status === 'idle'))?(
     <StyledDiv>
@@ -67,6 +68,7 @@ console.log(status, artist);
       <Tracks>
         <StyledSubTitle>top tracks</StyledSubTitle>
         {(artist.tracks).slice(0, 3).map((track) => (
+          <div>
             <PlayButton
               key={track.id}
               url={track.preview_url}
@@ -78,8 +80,8 @@ console.log(status, artist);
               idleBackgroundColor={'rgba(75, 75, 75, 0.4)'}
               progressCircleColor={'#3354FF'}
               progressCircleWidth={2}
-              styles={{margin:10}}
             />
+          </div>
           ))
         }
       </Tracks>
@@ -95,7 +97,7 @@ console.log(status, artist);
       </Related>
 
     </StyledDiv>
-  ) : <div>loading</div>
+  ) : <FullScreenSpinner/>
   
 };
 
@@ -148,6 +150,10 @@ const StyledSubTitle = styled.p`
 `;
 const Tracks = styled.div`
   height:20%;
+  div {
+    display: inline;
+    margin: 0 .5rem;
+  }
 `;
 const Tags = styled.div`
   height:15%;
