@@ -39,19 +39,20 @@ const receiveData = (data) => ({
   data,
 });
 
-const failToRetrieveData = (error) => ({
+const failToRetrieveData = (err) => ({
   type: 'FAIL_TO_RETRIEVE_DATA',
-  error,
+  err,
 });
 
 const App = () => {
   const dispatch = useDispatch();
 
   const handleClick = () => {
+    //dispatch(startRequestingData())
     fetch('/some-data')
       .then((res) => res.json())
-      .then((data) => {})
-      .catch((err) => {});
+      .then((data) => {})//dispatch(receiveData(data))
+      .catch((err) => {});//dispatch(failToRetrieveData(err))
   };
 
   return <button onClick={handleClick}>Do something</button>;
@@ -83,13 +84,13 @@ const App = () => {
     fetch('/hockey')
       .then((res) => res.json())
       .then((scores) => {
-        // TODO
+        dispatch(receiveHockeyScores(scores)) //
       });
 
     fetch('/baseball')
       .then((res) => res.json())
       .then((scores) => {
-        // TODO
+        dispatch(receiveBaseballScores(scores)) //
       });
   }, []);
 
@@ -116,15 +117,111 @@ const App = () => {
   React.useEffect(() => {
     // Dispatch `receiveAllScores` after BOTH fetches have completed
 
-    fetch('/hockey').then((scores) => {
-      dispatch(receiveHockeyScores(scores));
-    });
+    fetch('/hockey')
+      .then(res=>res.json())
+      .then((scores) => {
+        dispatch(receiveHockeyScores(scores));
+      });
 
-    fetch('/baseball').then((scores) => {
-      dispatch(receiveBaseballScores(scores));
-    });
+    fetch('/baseball')
+      .then(res=>res.json())
+      .then((scores) => {
+        dispatch(receiveBaseballScores(scores));
+      });
   }, []);
 
   return <Scores />;
 };
+////// best not do this
+React.useEffect(() => {
+    // Dispatch `receiveAllScores` after BOTH fetches have completed
+
+    fetch('/hockey')
+      .then(res=>res.json())
+      .then((scores1) => {
+        dispatch(receiveHockeyScores(scores1));
+      })
+      .then(
+        fetch('/baseball')
+        .then(res=>res.json())
+        .then((scores2) => {
+        dispatch(receiveBaseballScores(scores2));
+        })
+      )
+      .then(dispatch(receiveAllScores(scores1, scores2)))
+  }, []);
+
+  return <Scores />;
+};
+////// this viable
+React.useEffect(() => {
+    // Dispatch `receiveAllScores` after BOTH fetches have completed
+  let numOfCompletedRequests = 0;
+    fetch('/hockey')
+      .then(res=>res.json())
+      .then((scores1) => {
+        dispatch(receiveHockeyScores(scores1));
+        numOfCompletedRequests ++;
+        if(numOfCompletedRequests === 2){dispatch(receiveAllScores())};
+      })
+    fetch('/baseball')
+      .then(res=>res.json())
+      .then((scores2) => {
+        dispatch(receiveBaseballScores(scores2));
+        numOfCompletedRequests ++;
+        if(numOfCompletedRequests === 2){dispatch(receiveAllScores())};
+      })
+  }, []);
+
+  return <Scores />;
+};
+
+////// this viable
+React.useEffect(() => {
+    // Dispatch `receiveAllScores` after BOTH fetches have completed
+  let numOfCompletedRequests = 0;
+
+  const hockeyPromise = fetch('/hockey')
+    .then(res=>res.json())
+    .then((scores1) => {
+      dispatch(receiveHockeyScores(scores1));
+    });
+
+  const baseballPromise = fetch('/baseball')
+    .then(res=>res.json())
+    .then((scores2) => {
+      dispatch(receiveBaseballScores(scores2));
+    });
+
+  Promise.all([hockeyPromes, baseballPromise])
+    .then(()=>dispatch(receiveAllScores()))
+    .catch(err=> console.log('error', er))
+
+  }, []);
+
+  return <Scores />;
+};
+/////////////////////////// or async
+const receiveAllScores = ({scores}) => ({
+  type: 'RECEIVE_ALL_SCORES',
+});
+
+const App = () => {
+  const dispatch = useDispatch();
+
+  React.useEffect(async () => {
+    // Dispatch `receiveAllScores` after BOTH fetches have completed
+
+    const hockeyRes = await fetch('/hockey');
+    const hockeyScores = await hockeyRes.json();
+    const baseballRes = await fetch('/baseball');
+    const baseballScores = await hockeyRes.json();
+
+    await dispatch(receiveAllScores({hockeyScores, baseballScores})
+  }, []);
+
+  return <Scores />;
+
+
+
 ```

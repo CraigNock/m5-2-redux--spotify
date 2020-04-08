@@ -23,7 +23,7 @@ const state = {
     name: 'Bugs Bunny',
     species: 'Wabbit',
   },
-  orders: [
+  order: [
     {
       date: '01/02/03',
       items: ['carrot', 'carrot', 'carrot', 'ACME powder'],
@@ -82,6 +82,7 @@ export default combineReducers({
   user: userReducer,
   order: orderReducer,
 });
+///important "user" and "order" must match "user" "order" in state
 ```
 
 ---
@@ -110,7 +111,14 @@ export default combineReducers({
   number: numberReducer,
 });
 
-// What is the initial state?
+// What is the initial state format?
+state = {
+  color: 'red',
+  number: 4,
+}
+
+
+
 ```
 
 ---
@@ -129,7 +137,13 @@ export default combineReducers({
   location: locationReducer,
 });
 
-// What is the initial state?
+// What is the initial state format?
+{
+  item: {hi: 5},
+  location: 'montreal',
+}
+
+
 ```
 
 ---
@@ -148,7 +162,12 @@ export default combineReducers({
   household: furnitureReducer,
 });
 
-// What is the initial state?
+// What is the initial state format?
+{
+  pet: 'cat',
+  household: 'couch'
+}
+
 ```
 
 ---
@@ -178,7 +197,16 @@ export default combineReducers({
   ui: uiReducer,
 });
 
-// What is the initial state?
+// What is the initial state format?
+{
+  data: { 
+    entries: [] 
+  },
+  ui: {
+    modal: null,
+    tooltip: null,
+  }
+}
 ```
 
 ---
@@ -212,7 +240,7 @@ function userReducer(state, action) {
 
 ---
 
-By splitting our code into reducers, we keep the code simple.
+By splitting our code into reducers, we keep the code simple. 
 
 ---
 

@@ -19,9 +19,18 @@ app.get('/spotify_access_token', async (req, res, next) => {
     'base64'
   );
 
+  const response = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: {
+      Authorization: `basic ${authString}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'grant_type=client_credentials',
+  })
 
-  // TODO: use authString in a request to Spotify!
-  res.send({ todo: true });
+  const json = await response.json();
+
+  res.send(json);
 });
 
 app.listen(port, function(error) { 
