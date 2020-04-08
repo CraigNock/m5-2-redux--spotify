@@ -3,12 +3,15 @@ import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useDispatch }from 'react-redux';
+import PlayButton from 'react-play-button';
 
-import { fetchArtistProfile } from '../../helpers/api-helpers';
+import { fetchArtistProfile, fetchArtistTracks } from '../../helpers/api-helpers';
 import { 
-  requestArtistProfile, 
-  receiveArtistProfile, 
-  receiveArtistProfileError 
+  requestArtistInfo, 
+  receiveArtistProfile,
+  receiveArtistTracks,
+  receivedAllArtistInfo,
+  receiveArtistInfoError, 
 } from '../../actions';
 
 import {slimNumber} from '../utilities';
@@ -18,25 +21,43 @@ const ArtistRoute = () => {
   const accessToken = useSelector((state) => state.auth.token);
   // console.log('param ', artistId, 'tokenn ', accessToken);
   const artist = useSelector((state) => state.artists.currentArtist);
+  const status = useSelector((state) => state.artists.status);
   const dispatch = useDispatch();
+
+  const [playing, setPlaying] = React.useState(null);
 
   React.useEffect(()=>{
     if(!accessToken)
       return;
-    dispatch(requestArtistProfile());
-    fetchArtistProfile(accessToken, artistId)
+    dispatch(requestArtistInfo());
+    const profilePromise = fetchArtistProfile(accessToken, artistId)
       .then((res) => {
-        console.log(res.name);
+        console.log('profile ', res);
         dispatch(receiveArtistProfile(res));
-      })
+      });
+    const tracksPromise = fetchArtistTracks(accessToken, artistId)
+    .then((res) => {
+      console.log('tracks ',res);
+      dispatch(receiveArtistTracks(res.tracks));
+    });
+    Promise.all([profilePromise, tracksPromise])
+      .then(() => dispatch(receivedAllArtistInfo()))
+      .then(console.log(artist))
       .catch((err) => {
         console.error(err);
-        dispatch(receiveArtistProfileError(err));
+        dispatch(receiveArtistInfoError(err));
       })
   }, [accessToken])
 
   
-  return artist?(
+  const togglePlay = (input) => {
+    setPlaying(input);
+  };
+
+// 'https://p.scdn.co/mp3-preview/48e52b22229808784102425b7735be8458d687dc'
+console.log(status, artist);
+
+  return (artist && (status === 'idle'))?(
     <StyledDiv>
       <Header>
         <img src={artist.profile.images[0].url} alt='artist' />
@@ -44,18 +65,33 @@ const ArtistRoute = () => {
         <p><span>{slimNumber(artist.profile.followers.total)}</span> followers</p>
       </Header>
       <Tracks>
-      
+        <StyledSubTitle>top tracks</StyledSubTitle>
+        {(artist.tracks).slice(0, 3).map((track) => (
+            <PlayButton
+              key={track.id}
+              url={track.preview_url}
+              active={playing === track.id}
+              play={()=> togglePlay(track.id)}
+              stop={()=> togglePlay(null)}
+              playIconColor={'#FFFFFF'}
+              stopIconColor={'#FFFFFF'}
+              idleBackgroundColor={'rgba(75, 75, 75, 0.4)'}
+              progressCircleColor={'#3354FF'}
+              progressCircleWidth={2}
+              styles={{margin:10}}
+            />
+          ))
+        }
       </Tracks>
       <Tags>
-        <p>tags</p>
+        <StyledSubTitle>tags</StyledSubTitle>
         <p>
           <span>{artist.profile.genres[0]}</span>
           <span>{artist.profile.genres[1]}</span>
         </p>
-
       </Tags>
       <Related>
-
+        <StyledSubTitle>related artists</StyledSubTitle>
       </Related>
 
     </StyledDiv>
@@ -64,51 +100,71 @@ const ArtistRoute = () => {
 };
 
 const StyledDiv = styled.div`
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  /* justify-content: space-between; */
+  background: #0B0F14;
+  /* width: 100%; */
+  width: 375px;
+  height: 812px;
 `;
 const Header = styled.div`
   position: relative;
   text-align: center;
   width: 30rem;
-  margin: 2rem;
+  height:40%;
+  margin: 2rem 0 0;
   img {
-      height: 20rem;
+    width: 175px;
+    height: 175px;
       border-radius: 50%;
     }
   h1{
-    position: absolute;
+    /* position: absolute; */
+    z-index: 2;
     top: 15rem;
-    /* margin:0 auto; */
+    margin-top: -4rem;
     color: whitesmoke;
+    text-shadow: 4px 8px 25px #000000, 
+    0px 4px 4px rgba(0, 0, 0, 0.5), 
+    1px 2px 2px rgba(0, 0, 0, 0.75);
+
   }
   p{
-    margin: 1rem;
+    margin: 4rem 1rem 0;
     span{
       color: maroon;
       font-weight: bold;
     }
   }
 `;
+const StyledSubTitle = styled.p`
+  text-align: center;
+  font-size: 21px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+`;
 const Tracks = styled.div`
-
+  height:20%;
 `;
 const Tags = styled.div`
-  margin: 0 2rem 2rem;
+  height:15%;
   text-align: center;
   p {
-    margin: 2rem;
+    /* margin: 2rem; */
   }
   span {
-    margin: 2rem;
-    padding: 1rem;
+    font-size: .5rem;
+    margin: .5rem;
+    padding: .5rem;
     border: 1px solid gray;
+    border-radius: 5px;
   }
 `;
 const Related = styled.div`
-
+  height:25%;
 `;
 
 export default ArtistRoute;

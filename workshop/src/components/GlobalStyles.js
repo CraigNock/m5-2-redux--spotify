@@ -46,7 +46,7 @@ content: none;
 
 body {
 line-height: 1.25;
-background: #0B0F14;
+background: darkgray;
 color: white;
 }
 
