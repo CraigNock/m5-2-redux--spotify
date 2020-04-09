@@ -1,3 +1,18 @@
+# All Exercises & Stretches Complete
+## Screenshot
+
+<img src="./__lecture/assets/screenshot.png" alt="Finished app" />
+
+
+
+
+
+---
+---
+---
+---
+---
+
 # Redux workshop - Spotify client
 
 Today's workshop will see us build an application using _real data_ from the Spotify API.
