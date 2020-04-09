@@ -179,16 +179,32 @@ const Tracks = styled.div`
 const Tags = styled.div`
   height:15%;
   text-align: center;
-  p {
-    /* margin: 2rem; */
-  }
   span {
     font-size: .5rem;
     margin: .5rem;
     padding: .5rem;
     border: 1px solid gray;
     border-radius: 5px;
+    position: relative;
+    clip-path: polygon(
+      0% 25%, 7% 0%, 
+      100% 0%, 100% 0%, 
+      100% 100% , 100% 100%, 
+      0% 100%, 0% 100%
+      );
+    &:after {
+        content: '';
+        position: absolute;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        background: darkgray;
+        height: 7px;
+        width: 7px;
+        border-radius: 0 0 3px 0;
+    }
   }
+  
 `;
 
 const Related = styled.div`
