@@ -30,6 +30,14 @@ const artistsReducer = (state = initialState, action) => {
           tracks: action.tracks,
         },
       };
+    case 'RECEIVE_ARTIST_RELATED':
+      return {
+        ...state,
+        currentArtist: {
+          ...state.currentArtist,
+          related: action.related,
+        },
+      };
     case 'RECEIVED_ALL_ARTIST_INFO':
       return {
         ...state,

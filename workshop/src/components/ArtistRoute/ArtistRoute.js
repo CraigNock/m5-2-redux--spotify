@@ -4,12 +4,19 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useDispatch }from 'react-redux';
 import PlayButton from 'react-play-button';
+import { Link } from 'react-router-dom';
 
-import { fetchArtistProfile, fetchArtistTracks } from '../../helpers/api-helpers';
+import { 
+  fetchArtistProfile, 
+  fetchArtistTracks, 
+  fetchArtistRelated, 
+} from '../../helpers/api-helpers';
+
 import { 
   requestArtistInfo, 
   receiveArtistProfile,
   receiveArtistTracks,
+  receiveArtistRelated,
   receivedAllArtistInfo,
   receiveArtistInfoError, 
 } from '../../actions';
@@ -32,24 +39,29 @@ const ArtistRoute = () => {
     if(!accessToken)
       return;
     dispatch(requestArtistInfo());
-    const profilePromise = fetchArtistProfile(accessToken, artistId)
+    const profilePromise = fetchArtistProfile(accessToken, artistId)//profile
       .then((res) => {
         console.log('profile ', res);
         dispatch(receiveArtistProfile(res));
       });
-    const tracksPromise = fetchArtistTracks(accessToken, artistId)
+    const tracksPromise = fetchArtistTracks(accessToken, artistId)//tracks
     .then((res) => {
       console.log('tracks ',res);
       dispatch(receiveArtistTracks(res.tracks));
     });
-    Promise.all([profilePromise, tracksPromise])
+    const relatedPromise = fetchArtistRelated(accessToken, artistId)//tracks
+    .then((res) => {
+      console.log('tracks ',res);
+      dispatch(receiveArtistRelated(res.artists));
+    });
+    Promise.all([profilePromise, tracksPromise, relatedPromise])
       .then(() => dispatch(receivedAllArtistInfo()))
       .then(console.log(artist))
       .catch((err) => {
         console.error(err);
         dispatch(receiveArtistInfoError(err));
       })
-  }, [accessToken])
+  }, [accessToken, artistId]);
 
   
   const togglePlay = (input) => {
@@ -94,6 +106,17 @@ const ArtistRoute = () => {
       </Tags>
       <Related>
         <StyledSubTitle>related artists</StyledSubTitle>
+        <ArtistBox>
+          {artist.related.map((art) => (
+            <StyledLink to={`/artists/${art.id}`}>
+            <MiniArts key={art.id}>
+              <img src={art.images[0].url} alt='related artist'/>
+              <p>{art.name}</p>
+            </MiniArts>
+            </StyledLink>
+            )
+          )}
+        </ArtistBox>
       </Related>
 
     </StyledDiv>
@@ -121,18 +144,16 @@ const Header = styled.div`
   img {
     width: 175px;
     height: 175px;
-      border-radius: 50%;
+    border-radius: 50%;
     }
   h1{
-    /* position: absolute; */
     z-index: 2;
-    top: 15rem;
+    /* top: 15rem; */
     margin-top: -4rem;
     color: whitesmoke;
     text-shadow: 4px 8px 25px #000000, 
     0px 4px 4px rgba(0, 0, 0, 0.5), 
     1px 2px 2px rgba(0, 0, 0, 0.75);
-
   }
   p{
     margin: 4rem 1rem 0;
@@ -169,8 +190,58 @@ const Tags = styled.div`
     border-radius: 5px;
   }
 `;
+
 const Related = styled.div`
   height:25%;
+  width: 100%;
+`;
+const ArtistBox = styled.div`
+  width: 100%;
+  height: 140px;
+  overflow: auto;
+  display: flex;
+  flex-wrap: none;
+  scrollbar-width: thin;
+  scroll-snap-type: x mandatory;
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: black;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  width: 5px;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+`;
+const MiniArts = styled.div`
+  scroll-snap-align: start;
+  width: 90px;
+  height: 112px;
+  margin: 0 5px;
+  img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+  }
+  p {
+    text-align: center;
+    font-weight: 600;
+    text-transform: lowercase;
+    z-index: 2;
+    margin-top: -30px;
+    text-shadow: 4px 8px 25px #000000, 
+    0px 4px 4px rgba(0, 0, 0, 0.5), 
+    1px 2px 2px rgba(0, 0, 0, 0.75);
+  }
+`;
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: white;
 `;
 
 export default ArtistRoute;

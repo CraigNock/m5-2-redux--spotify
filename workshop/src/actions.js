@@ -30,6 +30,11 @@ export const receiveArtistTracks = (tracks) => ({
   tracks,
 });
 
+export const receiveArtistRelated = (related) => ({
+  type: 'RECEIVE_ARTIST_RELATED',
+  related,
+});
+
 export const receivedAllArtistInfo = () => ({
   type: 'RECEIVED_ALL_ARTIST_INFO',
 });
