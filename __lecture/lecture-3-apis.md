@@ -80,7 +80,11 @@ Here's how we typically get around this problem:
 ---
 
 This is complicated, so let's sketch it out.
+user=> server=> api
+user<= sever <= api token
 
+token user => api
+user <= api data
 ---
 
 ## Working with APIs

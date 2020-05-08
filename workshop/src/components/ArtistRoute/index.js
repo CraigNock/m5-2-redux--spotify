@@ -1,1 +1,1 @@
-export { default } from './ArtistRoute';
+export { default } from "./ArtistRoute";

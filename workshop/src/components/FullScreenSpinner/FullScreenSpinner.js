@@ -1,23 +1,23 @@
 import React from 'react';
-import Loader from 'react-loader-spinner';
 import styled from 'styled-components';
+import Loader from 'react-loader-spinner';
 
 const FullScreenSpinner = () => {
-  return (
-    <Wrapper>
-      <Loader color="var(--color-primary)" height={80} width={80} />
-    </Wrapper>
-  );
+  return ( 
+    <StyledDiv>
+      <Loader/>
+    </StyledDiv>
+  )
 };
 
-const Wrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: grid;
-  place-content: center;
+const StyledDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  background: #0B0F14;
+  width: 375px;
+  height: 812px;
 `;
 
 export default FullScreenSpinner;

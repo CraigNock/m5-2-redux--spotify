@@ -1,3 +1,18 @@
+# All Exercises & Stretches Complete
+## Screenshot
+
+<img src="./__lecture/assets/screenshot.png" alt="Finished app" />
+
+
+
+
+
+---
+---
+---
+---
+---
+
 # Redux workshop - Spotify client
 
 Today's workshop will see us build an application using _real data_ from the Spotify API.
@@ -739,13 +754,16 @@ Once the data is in your Redux store, use `useSelector` to fetch the `currentArt
 
 Spend some time rendering this to the screen. Don't worry about styles yet, but do focus on good component structure / semantic HTML.
 
-> Remember, the first time this renders, you won't have an artist yet! You can render a fallback, like the text "Loading...", until you have an artist you can use.
+You will need to manipulate the data somewhat, in the following ways:
 
-Select _only the first 2 genres_. The Spotify API might return many more.
+1. You only want to show the first 2 genres. The Spotify API might return many more.
+2. We should show a "short version" for the # of followers. Instead of displaying "2451376 followers", we should say "2M followers". Instead of "12345" followers, "12K followers". Feel free to write a utility function for this, or search for a pre-existing solution online.
 
 In the end, you should have something like this:
 
 <img src="./__lecture/assets/initial-profile.png" alt="Finished app" />
+
+> Remember, the first time this renders, you won't have an artist yet! You can render a fallback, like the text "Loading...", until you have an artist you can use.
 
 ---
 

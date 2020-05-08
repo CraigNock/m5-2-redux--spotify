@@ -10,7 +10,7 @@ const RelatedArtists = ({ artists }) => {
     <Wrapper>
       <Heading size="medium">Related Artists</Heading>
       <Row>
-        {artists.map(artist => (
+        {artists.map((artist) => (
           <RelatedArtist
             key={artist.id}
             id={artist.id}
@@ -40,6 +40,7 @@ const ItemWrapper = styled.li`
   display: flex;
   flex-direction: column;
   margin: 0 16px;
+  scroll-snap-align: start;
 `;
 
 const RelatedLink = styled(Link)`
@@ -64,6 +65,8 @@ const Row = styled.ul`
   margin: 0;
   width: 100vw;
   overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 32px;
 `;
 
 export default RelatedArtists;
